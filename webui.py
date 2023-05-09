@@ -291,6 +291,16 @@ def webui():
     launch_api = cmd_opts.api
     initialize()
 
+    # patch swagger api docs
+    def my_setup(self):
+        self.docs_url = "/docs"
+        self.redoc_url = "/redoc"
+        self.orig_setup()
+
+    FastAPI.orig_setup = FastAPI.setup
+    setattr(FastAPI, "setup", my_setup)
+    # end patch
+
     while 1:
         if shared.opts.clean_temp_dir_at_start:
             ui_tempdir.cleanup_tmpdr()
